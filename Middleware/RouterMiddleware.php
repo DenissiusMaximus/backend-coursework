@@ -2,12 +2,12 @@
 
 namespace Middleware;
 
-use Core\Pipeline\AbstractHandler;
+use Core\Pipeline\AbstractMiddleware;
 use Core\Request;
 use Core\Response;
 use Utils\Routing\IRouteProvider;
 
-class RouterMiddleware extends AbstractHandler
+class RouterMiddleware extends AbstractMiddleware
 {
     public function __construct(
         private readonly IRouteProvider $routeProvider,

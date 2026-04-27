@@ -54,7 +54,11 @@ class RouteProvider implements IRouteProvider
             foreach ($reflection->getMethods() as $method) {
                 $routeAttribute = $this->extractRouteAttribute($method);
                 if ($routeAttribute === null) {
-                    continue;
+                     if ($method->name === 'index') {
+                        $routeAttribute = new Route(path: '/');
+                    } else {
+                        continue;
+                    }
                 }
 
                 [$httpMethod, $methodPath] = $this->resolveRouteMeta($routeAttribute);

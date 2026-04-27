@@ -5,7 +5,7 @@ namespace Core\Pipeline;
 use Core\Request;
 use Core\Response;
 
-abstract class AbstractHandler implements Handler
+abstract class AbstractMiddleware implements Handler
 {
     private $nextHandler;
 

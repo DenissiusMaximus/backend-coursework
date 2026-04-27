@@ -3,16 +3,20 @@
 namespace Controllers;
 
 use Core\Attributes\Route;
+use Core\MVC\ControllerBase;
 use Core\Response;
 
 #[Route('transaction')]
-class TransactionController
+class TransactionController extends ControllerBase
 {
-    #[Route("Get", '/convert/{amount}/{toCurrency}')]
-    public function convert(float $amount, string $toCurrency): Response
-    {
-        $result = $amount * 40;
 
-        return new Response(body: "$result $toCurrency");
+    public function index(): Response
+    {
+        $data = [
+            'title' => 'Мої транзакції',
+            'balance' => 9500
+        ];
+
+        return $this->view('transactions/index', $data);
     }
 }

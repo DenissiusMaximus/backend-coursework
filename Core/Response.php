@@ -20,16 +20,31 @@ class Response
         return $this; 
     }
 
+    public function getBody(): string
+    {
+        return $this->body;
+    }
+
     public function setHeader(string $name, string $value): self
     {
         $this->headers[$name] = $value;
         return $this;
     }
 
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
     public function setStatusCode(int $code): self
     {
         $this->statusCode = $code;
         return $this;
+    }
+
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
     }
 
     public static function redirect(string $url): self
