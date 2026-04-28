@@ -38,10 +38,5 @@
     <main class="max-w-5xl mx-auto px-4 py-6">
         <?= $content ?>
     </main>
-
-    <footer class="text-center text-xs text-gray-400 py-4">
-        Курсова робота © 2026
-    </footer>
-
 </body>
 </html>

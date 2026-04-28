@@ -25,11 +25,11 @@ class RouteProvider implements IRouteProvider
         $uri = $this->normalizeUri($request->uri);
 
         foreach ($this->getRoutes() as $route) {
-            if ($route['httpMethod'] !== $request->method) {
+            if ($route->httpMethod !== $request->method) {
                 continue;
             }
 
-            if (!preg_match($route['regexPattern'], $uri, $matches)) {
+            if (!preg_match($route->regexPattern, $uri, $matches)) {
                 continue;
             }
 
@@ -64,12 +64,12 @@ class RouteProvider implements IRouteProvider
                 [$httpMethod, $methodPath] = $this->resolveRouteMeta($routeAttribute);
                 $fullPath = $this->combinePaths($basePath, $methodPath);
 
-                $routes[] = [
-                    'httpMethod' => $httpMethod,
-                    'regexPattern' => $this->buildRegexPattern($fullPath),
-                    'controllerClass' => $controllerClass,
-                    'method' => $method,
-                ];
+                $routes[] = new RouteDefinition(
+                    httpMethod: $httpMethod,
+                    regexPattern: $this->buildRegexPattern($fullPath),
+                    controllerClass: $controllerClass,
+                    method: $method,
+                );
             }
         }
 
@@ -140,7 +140,7 @@ class RouteProvider implements IRouteProvider
 
     private function isHttpMethod(string $value): bool
     {
-        return in_array($value, ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'], true);
+        return in_array($value, ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], true);
     }
 
     private function looksLikePath(string $value): bool
@@ -148,10 +148,10 @@ class RouteProvider implements IRouteProvider
         return str_starts_with($value, '/');
     }
 
-    private function invokeController(array $route, Request $request, array $matches): Response
+    private function invokeController(RouteDefinition $route, Request $request, array $matches): Response
     {
-        $controller = new $route['controllerClass']();
-        $method = $route['method'];
+        $controller = new $route->controllerClass();
+        $method = $route->method;
 
         $args = $this->buildMethodArguments($method, $request, $matches);
         $result = $method->invokeArgs($controller, $args);
