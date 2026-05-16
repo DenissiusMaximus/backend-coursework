@@ -61,7 +61,6 @@
                 </tr>
             </thead>
             <tbody id="transactions-list" class="divide-y divide-gray-100">
-                <!-- Data will be loaded here -->
             </tbody>
         </table>
     </div>
@@ -80,7 +79,7 @@
     async function loadTransactions() {
         const btn = document.getElementById('load-more-btn');
         btn.disabled = true;
-        btn.textContent = 'Завантаження...';
+        btn.textContent = '...';
 
         try {
             const res = await fetch(`${baseUrl}/transactions/api?limit=${limit}&offset=${offset}`);
@@ -160,7 +159,6 @@
 
     document.getElementById('load-more-btn').addEventListener('click', loadTransactions);
 
-    // Initial load
     document.addEventListener('DOMContentLoaded', () => {
         loadTransactions();
     });
