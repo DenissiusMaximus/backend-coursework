@@ -1,8 +1,9 @@
 <?php
 
 require_once 'Core/autoload.php';
-require_once 'Core/helpers.php';
 
+use Core\App;
+use Utils\Routing\RouteProvider;
 use Controllers\AimController;
 use Controllers\AuthController;
 use Controllers\CategoryController;
@@ -10,11 +11,10 @@ use Controllers\HomeController;
 use Controllers\SourceController;
 use Controllers\TransactionController;
 use Controllers\UserController;
-use Core\App;
 use Middleware\AuthMiddleware;
+use Middleware\HelperMiddleware;
 use Middleware\NotFoundMiddleware;
 use Middleware\RouterMiddleware;
-use Utils\Routing\RouteProvider;
 
 $app = new App();
 
@@ -28,6 +28,8 @@ $routeProvider = new RouteProvider([
     AuthController::class,
 ]);
 
+
+$app->use(new HelperMiddleware());
 $app->use(new AuthMiddleware());
 $app->use(new RouterMiddleware($routeProvider));
 $app->use(new NotFoundMiddleware());
