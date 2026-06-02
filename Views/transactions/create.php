@@ -14,7 +14,7 @@
             <select name="category_id" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
                 <option value="">— Оберіть —</option>
                 <?php foreach ($categories as $cat): ?>
-                <option value="<?= $cat->id ?>"><?= htmlspecialchars($cat->name) ?></option>
+                <option value="<?= $cat->id ?>"><?= htmlspecialchars($cat->name) ?> (<?= $cat->type === 'income' ? 'Дохід' : 'Витрата' ?>)</option>
                 <?php endforeach; ?>
             </select>
         </div>

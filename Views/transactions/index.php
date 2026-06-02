@@ -20,7 +20,7 @@
             <?php
             $categoryMap = [];
             foreach ($categories as $cat) {
-                $categoryMap[$cat->id] = $cat->name;
+                $categoryMap[$cat->id] = ['name' => $cat->name, 'type' => $cat->type];
             }
             $sourceMap = [];
             foreach ($sources as $src) {
@@ -33,7 +33,15 @@
                 <td class="px-4 py-3 font-medium <?= $t->amount >= 0 ? 'text-green-600' : 'text-red-500' ?>">
                     <?= number_format($t->amount, 2) ?> грн
                 </td>
-                <td class="px-4 py-3"><?= htmlspecialchars($categoryMap[$t->category_id] ?? '—') ?></td>
+                <td class="px-4 py-3">
+                    <?php if (isset($categoryMap[$t->category_id])): ?>
+                        <span class="px-2 py-0.5 rounded text-xs <?= $categoryMap[$t->category_id]['type'] === 'income' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600' ?>">
+                            <?= htmlspecialchars($categoryMap[$t->category_id]['name']) ?> — <?= $categoryMap[$t->category_id]['type'] === 'income' ? 'Дохід' : 'Витрата' ?>
+                        </span>
+                    <?php else: ?>
+                        —
+                    <?php endif; ?>
+                </td>
                 <td class="px-4 py-3"><?= htmlspecialchars($sourceMap[$t->source_id] ?? '—') ?></td>
                 <td class="px-4 py-3 text-gray-500"><?= htmlspecialchars($t->date ?? '—') ?></td>
                 <td class="px-4 py-3 text-gray-500"><?= htmlspecialchars($t->comment ?? '—') ?></td>
