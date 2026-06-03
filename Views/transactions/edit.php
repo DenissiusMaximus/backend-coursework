@@ -10,11 +10,19 @@
         </div>
 
         <div>
+            <label class="block text-sm text-gray-600 mb-1">Тип</label>
+            <select name="type" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                <option value="expense" <?= $transaction->type === 'expense' ? 'selected' : '' ?>>Витрата</option>
+                <option value="income" <?= $transaction->type === 'income' ? 'selected' : '' ?>>Дохід</option>
+            </select>
+        </div>
+
+        <div>
             <label class="block text-sm text-gray-600 mb-1">Категорія</label>
             <select name="category_id" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
                 <?php foreach ($categories as $cat): ?>
                 <option value="<?= $cat->id ?>" <?= $cat->id === $transaction->category_id ? 'selected' : '' ?>>
-                    <?= htmlspecialchars($cat->name) ?> (<?= $cat->type === 'income' ? 'Дохід' : 'Витрата' ?>)
+                    <?= htmlspecialchars($cat->name) ?>
                 </option>
                 <?php endforeach; ?>
             </select>

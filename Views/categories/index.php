@@ -11,7 +11,6 @@
             <tr>
                 <th class="px-4 py-3">ID</th>
                 <th class="px-4 py-3">Назва</th>
-                <th class="px-4 py-3">Тип</th>
                 <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
                     <th class="px-4 py-3">Дії</th>
                 <?php endif; ?>
@@ -22,11 +21,6 @@
             <tr class="hover:bg-gray-50">
                 <td class="px-4 py-3 text-gray-500"><?= $cat->id ?></td>
                 <td class="px-4 py-3"><?= htmlspecialchars($cat->name) ?></td>
-                <td class="px-4 py-3">
-                    <span class="px-2 py-0.5 rounded text-xs <?= $cat->type === 'income' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600' ?>">
-                        <?= $cat->type === 'income' ? 'Дохід' : 'Витрата' ?>
-                    </span>
-                </td>
                 <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
                     <td class="px-4 py-3 flex gap-2">
                         <a href="<?= url('categories/edit/' . $cat->id) ?>" class="text-blue-600 hover:underline text-xs">Редагувати</a>
@@ -38,7 +32,7 @@
             </tr>
             <?php endforeach; ?>
             <?php if (empty($categories)): ?>
-            <tr><td colspan="4" class="px-4 py-6 text-center text-gray-400">Категорій немає</td></tr>
+            <tr><td colspan="3" class="px-4 py-6 text-center text-gray-400">Категорій немає</td></tr>
             <?php endif; ?>
         </tbody>
     </table>

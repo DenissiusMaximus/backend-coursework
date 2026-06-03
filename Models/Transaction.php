@@ -9,6 +9,7 @@ class Transaction
         public int $source_id,
         public int $category_id,
         public float $amount,
+        public string $type,
         public ?string $comment = null,
         public ?string $date = null,
         public ?int $id = null

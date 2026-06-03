@@ -41,11 +41,73 @@
     </div>
 </div>
 
+<?php
+$totalAimsTarget = 0;
+$totalAimsCurrent = 0;
+if (isset($aims) && is_array($aims)) {
+    foreach ($aims as $aim) {
+        $totalAimsTarget += $aim->target_amount;
+        $totalAimsCurrent += $aim->current_amount;
+    }
+}
+$aimsProgressPercent = $totalAimsTarget > 0 ? min(100, round(($totalAimsCurrent / $totalAimsTarget) * 100)) : 0;
+?>
+
+<!-- Aims Summary -->
+<div class="mb-8">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold text-gray-800">Загальний прогрес цілей</h2>
+        <a href="<?= url('aims') ?>" class="text-sm text-blue-600 hover:underline">Усі цілі</a>
+    </div>
+    <div class="bg-white border border-gray-200 rounded p-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+                <div class="text-sm text-gray-500 mb-1">Загальна сума цілей</div>
+                <div class="text-2xl font-bold text-gray-800"><?= number_format($totalAimsTarget, 2) ?> ₴</div>
+            </div>
+            <div class="flex-1 max-w-2xl w-full">
+                <div class="flex justify-between text-sm mb-2">
+                    <span class="text-gray-600 font-medium">Зібрано: <?= number_format($totalAimsCurrent, 2) ?> ₴</span>
+                    <span class="font-bold text-blue-600"><?= $aimsProgressPercent ?>%</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-3">
+                    <div class="bg-blue-500 h-3 rounded-full transition-all duration-500" style="width: <?= $aimsProgressPercent ?>%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php
+$uniqueCategories = [];
+if (isset($categories) && is_array($categories)) {
+    foreach ($categories as $cat) {
+        if (!isset($uniqueCategories[$cat->name])) {
+            $uniqueCategories[$cat->name] = $cat;
+        }
+    }
+}
+?>
+
 <!-- Transactions -->
 <div>
-    <div class="flex justify-between items-center mb-4">
+    <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-3">
         <h2 class="text-lg font-semibold text-gray-800">Останні транзакції</h2>
-        <a href="<?= url('transactions/create') ?>" class="text-sm text-blue-600 hover:underline">+ Нова транзакція</a>
+        <div class="flex flex-col sm:flex-row gap-3 items-center">
+            <select id="filter-type" class="border border-gray-300 rounded px-3 py-1.5 text-sm" onchange="applyFilters()">
+                <option value="">Усі типи</option>
+                <option value="income">Доходи</option>
+                <option value="expense">Витрати</option>
+            </select>
+            <select id="filter-category" class="border border-gray-300 rounded px-3 py-1.5 text-sm" onchange="applyFilters()">
+                <option value="">Усі категорії</option>
+                <?php foreach ($uniqueCategories as $name => $cat): ?>
+                    <option value="<?= htmlspecialchars($name) ?>"><?= htmlspecialchars($name) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <input type="date" id="filter-date" class="border border-gray-300 rounded px-3 py-1.5 text-sm" onchange="applyFilters()">
+            <a href="<?= url('transactions/create') ?>" class="text-sm text-blue-600 hover:underline shrink-0">+ Нова транзакція</a>
+        </div>
     </div>
 
     <div class="bg-white rounded border border-gray-200 overflow-hidden mb-4">
@@ -76,13 +138,28 @@
     let offset = 0;
     const baseUrl = '<?= rtrim(url(''), '/') ?>';
 
+    function applyFilters() {
+        offset = 0;
+        document.getElementById('transactions-list').innerHTML = '';
+        loadTransactions();
+    }
+
     async function loadTransactions() {
         const btn = document.getElementById('load-more-btn');
         btn.disabled = true;
         btn.textContent = '...';
 
+        const categoryName = document.getElementById('filter-category').value;
+        const type = document.getElementById('filter-type').value;
+        const date = document.getElementById('filter-date').value;
+        
+        let fetchUrl = `${baseUrl}/transactions/api/filtered?limit=${limit}&offset=${offset}`;
+        if (categoryName) fetchUrl += `&category_name=${encodeURIComponent(categoryName)}`;
+        if (type) fetchUrl += `&type=${type}`;
+        if (date) fetchUrl += `&date=${date}`;
+
         try {
-            const res = await fetch(`${baseUrl}/transactions/api?limit=${limit}&offset=${offset}`);
+            const res = await fetch(fetchUrl);
             const data = await res.json();
 
             if (data.length < limit) {

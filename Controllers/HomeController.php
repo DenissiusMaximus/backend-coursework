@@ -10,6 +10,7 @@ use Core\Request;
 use Repositories\SourceRepository;
 use Repositories\TransactionRepository;
 use Repositories\CategoryRepository;
+use Repositories\AimRepository;
 
 #[Route('/')]
 class HomeController extends ControllerBase
@@ -22,13 +23,16 @@ class HomeController extends ControllerBase
         $sourceRepo = new SourceRepository();
         $transactionRepo = new TransactionRepository();
         $categoryRepo = new CategoryRepository();
+        $aimRepo = new AimRepository();
 
         if ($role === 'admin') {
             $sources = $sourceRepo->findAll();
             $transactions = $transactionRepo->getPaginatedAll(10, 0);
+            $aims = $aimRepo->findAll();
         } else {
             $sources = $sourceRepo->findByUserId($userId);
             $transactions = $transactionRepo->getPaginatedByUserId($userId, 10, 0);
+            $aims = $aimRepo->findByUserId($userId);
         }
 
         $categories = $categoryRepo->findAll();
@@ -41,6 +45,7 @@ class HomeController extends ControllerBase
             'totalBalance' => $totalBalance,
             'transactions' => $transactions,
             'categories' => $categories,
+            'aims' => $aims,
         ]);
     }
 }

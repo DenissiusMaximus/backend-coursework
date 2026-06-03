@@ -23,7 +23,6 @@ class CategoryRepository implements ICategoryRepository
 
         return array_map(fn($row) => new Category(
             $row['name'],
-            $row['type'],
             $row['id']
         ), $rows);
     }
@@ -36,17 +35,16 @@ class CategoryRepository implements ICategoryRepository
 
         if (!$row) return null;
 
-        return new Category($row['name'], $row['type'], $row['id']);
+        return new Category($row['name'], $row['id']);
     }
 
     public function create(Category $category): int
     {
         $stmt = $this->db->prepare(
-            "INSERT INTO categories (name, type) VALUES (:name, :type)"
+            "INSERT INTO categories (name) VALUES (:name)"
         );
         $stmt->execute([
             'name' => $category->name,
-            'type' => $category->type,
         ]);
 
         return (int) $this->db->lastInsertId();
@@ -55,12 +53,11 @@ class CategoryRepository implements ICategoryRepository
     public function update(Category $category): bool
     {
         $stmt = $this->db->prepare(
-            "UPDATE categories SET name = :name, type = :type WHERE id = :id"
+            "UPDATE categories SET name = :name WHERE id = :id"
         );
 
         return $stmt->execute([
             'name' => $category->name,
-            'type' => $category->type,
             'id'   => $category->id,
         ]);
     }

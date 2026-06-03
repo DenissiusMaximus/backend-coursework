@@ -48,7 +48,6 @@ class CategoryController extends ControllerBase
 
         $this->repo->create(new Category(
             name: $request->post('name'),
-            type: $request->post('type'),
         ));
 
         return $this->redirect('/categories');
@@ -76,7 +75,6 @@ class CategoryController extends ControllerBase
 
         $this->repo->update(new Category(
             name: $request->post('name'),
-            type: $request->post('type'),
             id: $id,
         ));
 

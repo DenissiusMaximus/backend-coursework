@@ -9,13 +9,7 @@
                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
         </div>
 
-        <div>
-            <label class="block text-sm text-gray-600 mb-1">Тип</label>
-            <select name="type" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-                <option value="income" <?= $category->type === 'income' ? 'selected' : '' ?>>Дохід</option>
-                <option value="expense" <?= $category->type === 'expense' ? 'selected' : '' ?>>Витрата</option>
-            </select>
-        </div>
+        <input type="hidden" name="type" value="expense">
 
         <div class="flex gap-3 pt-2">
             <button type="submit" class="bg-blue-600 text-white text-sm px-4 py-2 rounded hover:bg-blue-700">Зберегти</button>

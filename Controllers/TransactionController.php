@@ -72,6 +72,7 @@ class TransactionController extends ControllerBase
             source_id: (int) $request->post('source_id'),
             category_id: (int) $request->post('category_id'),
             amount: (float) $request->post('amount'),
+            type: $request->post('type') ?? 'expense',
             comment: $request->post('comment'),
             date: $request->post('date'),
         );
@@ -117,6 +118,7 @@ class TransactionController extends ControllerBase
             source_id: (int) $request->post('source_id'),
             category_id: (int) $request->post('category_id'),
             amount: (float) $request->post('amount'),
+            type: $request->post('type') ?? 'expense',
             comment: $request->post('comment'),
             date: $request->post('date'),
             id: $id,
@@ -177,7 +179,54 @@ class TransactionController extends ControllerBase
                 'date' => $t->date,
                 'category_name' => $categoryMap[$t->category_id] ?? 'Невідомо',
                 'source_name' => $sourceMap[$t->source_id] ?? 'Невідомо',
-                'is_income' => $t->amount > 0,
+                'is_income' => $t->type === 'income',
+            ];
+        }, $transactions);
+
+        return $this->json($data);
+    }
+
+    #[Route('api/filtered', 'GET')]
+    public function apiFiltered(Request $request): Response
+    {
+        $userId = $request->user->id ?? 0;
+        $role = $request->user->role ?? 'user';
+
+        $limit = (int) ($request->get('limit') ?? 10);
+        $offset = (int) ($request->get('offset') ?? 0);
+        
+        $categoryName = $request->get('category_name') ?: null;
+        $type = $request->get('type') ?: null;
+        $date = $request->get('date') ?: null;
+
+        if ($role === 'admin') {
+            $transactions = $this->repo->getFilteredPaginatedAll($limit, $offset, $categoryName, $type, $date);
+        } else {
+            $transactions = $this->repo->getFilteredPaginatedByUserId($userId, $limit, $offset, $categoryName, $type, $date);
+        }
+
+        $categories = $this->categoryRepo->findAll();
+        $sources = $this->sourceRepo->findAll();
+
+        $categoryMap = [];
+        foreach ($categories as $cat) {
+            $categoryMap[$cat->id] = $cat->name;
+        }
+
+        $sourceMap = [];
+        foreach ($sources as $src) {
+            $sourceMap[$src->id] = $src->name;
+        }
+
+        $data = array_map(function ($t) use ($categoryMap, $sourceMap) {
+            return [
+                'id' => $t->id,
+                'amount' => $t->amount,
+                'comment' => $t->comment,
+                'date' => $t->date,
+                'category_name' => $categoryMap[$t->category_id] ?? 'Невідомо',
+                'source_name' => $sourceMap[$t->source_id] ?? 'Невідомо',
+                'is_income' => $t->type === 'income',
             ];
         }, $transactions);
 
